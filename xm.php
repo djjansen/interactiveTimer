@@ -9,10 +9,12 @@ if (!$conn) {
     die('Could not connect: ' . mysqli_error($conn));
 }
 
-$sql = "INSERT INTO timer (time,status,readout)
-VALUES (now(),'".$q."','".$rdout."')";
+$sql = "INSERT INTO timer (time,status,readout) VALUES (now(),?,?)";
 
-$result = mysqli_query($conn,$sql);
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "ss", $q, $rdout);
+$result = mysqli_stmt_execute($stmt);
+mysqli_stmt_close($stmt);
 
 echo $result;
 
