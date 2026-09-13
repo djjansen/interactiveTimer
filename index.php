@@ -9,6 +9,7 @@
 <script type="text/javascript">
 paused = false;
 flagTimer='start';
+var lastActionTime = 0;
 function ajax(funct) {
 		var hrs = document.getElementById("hours").innerHTML;
         var mins = document.getElementById("minutes").innerHTML;
@@ -70,8 +71,14 @@ xmlhttp.send();
 }
 
 function vote(selection) {
+lastActionTime = Date.now();
 document.getElementById("bets").classList.remove("visible");
 document.getElementById("bets").classList.add("invisible");
+if (selection == 'Over') {
+	OverCount++;
+} else if (selection == 'Under') {
+	UnderCount++;
+}
 OvrUnd(selection);
 chart.data.datasets[0].data[0]=[OverCount];
 chart.data.datasets[0].data[1]=[UnderCount];
@@ -80,6 +87,7 @@ voteCount++;
 }
 
 function reset() {
+lastActionTime = Date.now();
 document.getElementById("hours").innerHTML="00";
 document.getElementById("minutes").innerHTML="00";
 document.getElementById("seconds").innerHTML="00";
@@ -91,6 +99,7 @@ ajax('Clear');
 flagTimer='start';
 }
 function pause() {
+  lastActionTime = Date.now();
   var ouString = document.getElementById("numberSelect").value;
   console.log(ouString);
   if (flagTimer=='start') {
@@ -148,6 +157,7 @@ var voteCount = 0;
 var startTime = 0;
 
 function fetch(ind,ele,ind2,ele2,ind3,ele3) {
+var reqSentAt = Date.now();
 if (window.XMLHttpRequest) {
             // code for IE7+, Firefox, Chrome, Opera, Safari
            var init_request = new XMLHttpRequest();
@@ -157,6 +167,12 @@ if (window.XMLHttpRequest) {
         }
 init_request.onreadystatechange = function() {
 if ((init_request.readyState == 4 && init_request.status >= 200 && init_request.status < 300) || (init_request.status === 0 && !!init_request.responseXML)) {
+	if (reqSentAt < lastActionTime) {
+		// this response was in flight before a more recent button click; drop it
+		// so it can't overwrite the optimistic UI state, and poll again shortly
+		setTimeout(fetch,200,0,"hours",1,"minutes",2,"seconds");
+		return;
+	}
 	console.log(init_request.responseText);
     var s = init_request.responseText.split(",");
     var r = s[0].split(":");
@@ -283,9 +299,9 @@ chart.data.datasets[0].data[0]=[OverCount];
 chart.data.datasets[0].data[1]=[UnderCount];
 chart.update();
 }
-setTimeout(fetch,milliseconds,0,"hours",1,"minutes",2,"seconds")
-var milliseconds = now.getMilliseconds();
+var milliseconds = new Date().getMilliseconds();
 var newTimeout = 1000 - milliseconds;
+setTimeout(fetch,newTimeout,0,"hours",1,"minutes",2,"seconds")
 }
 }
 init_request.open("GET","req.php", true);
