@@ -135,8 +135,12 @@ function pause() {
 	    flagTimer='resume';
 	    chart.update();
 		document.getElementById("bets").classList.add("visible");
-
-
+		document.getElementById('ouToggle').style="";
+		document.getElementById('inputDropdown').style="display:none";
+		document.getElementById('slider_left').style.backgroundColor="#8D9092";
+		document.getElementById('slider_left').style.color="#8D9092";
+		document.getElementById('slider_right').style.backgroundColor="#7BAFD4";
+		document.getElementById('slider_right').style.color="#FFF";
 
 	} else {
 		document.getElementById('asterisk').innerHTML="*"
