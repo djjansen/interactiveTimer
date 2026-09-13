@@ -92,11 +92,22 @@ document.getElementById("hours").innerHTML="00";
 document.getElementById("minutes").innerHTML="00";
 document.getElementById("seconds").innerHTML="00";
 document.getElementById('Pause').innerHTML="start";
+document.getElementById('asterisk').innerHTML="";
+document.getElementById('warning').innerHTML="";
+document.getElementById("bets").classList.remove("visible");
+document.getElementById("bets").classList.add("invisible");
+document.getElementById('ouToggle').style="display:none";
+document.getElementById('inputDropdown').style="";
+document.getElementById('slider_left').style.backgroundColor="#13294B";
+document.getElementById('slider_left').style.color="#FFF";
+document.getElementById('slider_right').style.backgroundColor="#8D9092";
+document.getElementById('slider_right').style.color="#8D9092";
 chart.data.datasets[0].data[0]=[0];
 chart.data.datasets[0].data[1]=[0];
 chart.update();
 ajax('Clear');
 flagTimer='start';
+voteCount=0;
 }
 function pause() {
   lastActionTime = Date.now();
