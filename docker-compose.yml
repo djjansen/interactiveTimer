@@ -1,0 +1,41 @@
+services:
+  site1:
+    build: .
+    command: php -S 0.0.0.0:8000 -t site1
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html
+      - ./cred.php:/var/cred.php:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+  site2:
+    build: .
+    command: php -S 0.0.0.0:8001 -t site2
+    ports:
+      - "8001:8001"
+    volumes:
+      - .:/var/www/html
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: interactivetimer
+      MYSQL_USER: timer
+      MYSQL_PASSWORD: timerpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db-init:/docker-entrypoint-initdb.d:ro
+      - dbdata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  dbdata:

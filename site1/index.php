@@ -3,9 +3,7 @@
 <head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 <link rel="shortcut icon" type="image/x-icon" href="https://cdn3.iconfinder.com/data/icons/ui-10/512/paper_roll-512.png"/>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="apple-mobile-web-app-capable" content="yes" />
+<?php include __DIR__ . '/../shared/partials/head.php'; ?>
 <script type="text/javascript">
 paused = false;
 flagTimer='start';
@@ -324,15 +322,6 @@ init_request.send();
 }
 </script>
 <style>
-html, body {
-  overflow-x: hidden;
-}
-body {
-  position: relative
-}
-#timer {
-  font-family: 'Orbitron', sans-serif;
-}
 #overunder_row {
 	margin-right:10px;
 	margin-left:10px;
@@ -361,9 +350,6 @@ body {
 	background-color:#8D9092;
 	color:#8D9092;
 	vertical-align:center;
-}
-.time {
-  font-family: 'Orbitron', sans-serif;
 }
 .btn {
 	height:50px;
@@ -407,17 +393,6 @@ body {
 .OverUnder {
 	width:60px;
     height:60px;
-}
-#headerRow {
-  background-color:#000;
-  text-align:center;
-  padding-right:0;
-  padding-left:0;
-}
-#footer {
-  text-align:center;
-  margin-bottom:5%;
-  padding:10px;
 }
 </style>
 </head>

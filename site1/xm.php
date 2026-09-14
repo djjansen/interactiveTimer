@@ -1,6 +1,6 @@
 <?php 
 ini_set("display_errors",1);
-include("/var/cred.php");
+require __DIR__ . '/../shared/db.php';
 
 $q = (string)$_GET['q'];
 $rdout = (string)$_GET['rdout'];
