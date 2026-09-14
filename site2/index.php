@@ -60,6 +60,7 @@ $countdownTargetIso = date('c', strtotime($countdownTarget));
 #levelsOverlay h1 {
 	color: #FFF;
 	font-weight: bold;
+	font-size: clamp(2.5em, 12vw, 7em);
 	letter-spacing: 2px;
 	text-align: center;
 	padding: 0 20px;
