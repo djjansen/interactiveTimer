@@ -14,21 +14,71 @@ $countdownTargetIso = date('c', strtotime($countdownTarget));
 	width: 20em;
 	max-width: 100%;
 	margin: 0 auto;
+	padding-top: 15px;
+}
+#levelsModeLink {
+	position: absolute;
+	top: 10px;
+	right: 15px;
+	color: #FFF;
+	text-decoration: none;
+	font-weight: bold;
+	line-height: 1.2;
+	text-align: right;
+}
+#levelsModeLink:hover {
+	color: #FFF;
+	text-decoration: underline;
+}
+#levelsOverlay {
+	display: none;
+	position: fixed;
+	inset: 0;
+	background: linear-gradient(135deg, #2b0a3d, #ff6a00, #ffd452);
+	z-index: 9999;
+	align-items: center;
+	justify-content: center;
+}
+#levelsOverlay.visible {
+	display: flex;
+}
+#levelsCloseLink {
+	position: absolute;
+	top: 20px;
+	right: 25px;
+	color: #FFF;
+	font-size: 2em;
+	text-decoration: none;
+	line-height: 1;
+}
+#levelsOverlay h1 {
+	color: #FFF;
+	font-weight: bold;
+	letter-spacing: 2px;
+	text-align: center;
+	padding: 0 20px;
 }
 </style>
 </head>
 <body>
-  <div class="container-fluid" id="headerRow">
+  <div class="container-fluid" id="headerRow" style="position:relative">
     <div class="row">
       <div class="col-md-12">
-        <h2 style="color:#FFF;padding:20px 0;margin:0"><?php echo htmlspecialchars($countdownText); ?></h2>
+        <a href="#" id="levelsModeLink" onclick="toggleLevelsMode(event);">LEVELS<br>MODE</a>
       </div>
     </div>
   </div>
   <div class="row" id="widgets" style="text-align:center;color:#000">
-    <div class="col-md-12" id="timer">
-      <span id="days" class="time">00</span>:<span id="hours" class="time">00</span>:<span id="minutes" class="time">00</span>:<span id="seconds" class="time">00</span>
+    <div class="col-md-12">
+      <h2 style="margin:15px 0 0 0"><?php echo htmlspecialchars($countdownText); ?></h2>
+      <div id="timer">
+        <span id="days" class="time">00</span>:<span id="hours" class="time">00</span>:<span id="minutes" class="time">00</span>:<span id="seconds" class="time">00</span>
+      </div>
     </div>
+  </div>
+  <div id="levelsOverlay">
+    <a href="#" id="levelsCloseLink" onclick="toggleLevelsMode(event);">&times;</a>
+    <h1>LEVELS - AVICII</h1>
   </div>
   <script>
   var countdownTarget = new Date("<?php echo $countdownTargetIso; ?>").getTime();
@@ -49,6 +99,11 @@ $countdownTargetIso = date('c', strtotime($countdownTarget));
 
   updateCountdown();
   setInterval(updateCountdown, 1000);
+
+  function toggleLevelsMode(e) {
+    e.preventDefault();
+    document.getElementById('levelsOverlay').classList.toggle('visible');
+  }
   </script>
 </body>
 </html>
