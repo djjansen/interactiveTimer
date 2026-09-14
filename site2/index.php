@@ -8,6 +8,14 @@ $countdownTargetIso = date('c', strtotime($countdownTarget));
 <title>Countdown</title>
 <link rel="icon" type="image/svg+xml" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/calendar-heart.svg"/>
 <?php include __DIR__ . '/../shared/partials/head.php'; ?>
+<style>
+#timer {
+	font-size: clamp(1.4em, 10vw, 4.5em);
+	width: 20em;
+	max-width: 100%;
+	margin: 0 auto;
+}
+</style>
 </head>
 <body>
   <div class="container-fluid" id="headerRow">
@@ -18,7 +26,7 @@ $countdownTargetIso = date('c', strtotime($countdownTarget));
     </div>
   </div>
   <div class="row" id="widgets" style="text-align:center;color:#000">
-    <div class="col-md-12" id="timer" style="font-size: 4.5em; width: 20em; margin:auto">
+    <div class="col-md-12" id="timer">
       <span id="days" class="time">00</span>:<span id="hours" class="time">00</span>:<span id="minutes" class="time">00</span>:<span id="seconds" class="time">00</span>
     </div>
   </div>

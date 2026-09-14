@@ -322,6 +322,12 @@ init_request.send();
 }
 </script>
 <style>
+#timer {
+	font-size: clamp(1.8em, 13vw, 4.5em);
+	width: 16em;
+	max-width: 100%;
+	margin: 0 auto;
+}
 #overunder_row {
 	margin-right:10px;
 	margin-left:10px;
@@ -416,7 +422,7 @@ init_request.send();
 </div>
 </div>
 <div class ="row" id="widgets" style="alignment:center;text-align:center;color:#000">
-	<div class="col-md-12" id="timer" style="font-size: 4.5em; width: 16em">
+	<div class="col-md-12" id="timer">
 		<span id="hours" class="time">00</span>:<span id="minutes" class="time">00</span>:<span id="seconds" class="time">00</span>
 	</div>
 </div>
