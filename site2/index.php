@@ -16,6 +16,9 @@ $countdownTargetIso = date('c', strtotime($countdownTarget));
 	margin: 0 auto;
 	padding-top: 15px;
 }
+#headerRow {
+	min-height: 65px;
+}
 #levelsModeLink {
 	position: absolute;
 	top: 10px;
