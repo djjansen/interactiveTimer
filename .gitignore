@@ -1,0 +1,3 @@
+cred.php
+db-init/*.sql
+!db-init/schema.sql

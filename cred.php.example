@@ -1,0 +1,5 @@
+<?php
+// Copy this file to cred.php (gitignored) and adjust credentials if needed.
+// docker-compose bind-mounts cred.php to /var/cred.php inside the web
+// container, matching the hardcoded include("/var/cred.php") in the app.
+$conn = mysqli_connect("db", "timer", "timerpass", "interactivetimer");
