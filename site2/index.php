@@ -60,7 +60,7 @@ $countdownTargetIso = date('c', strtotime($countdownTarget));
 #levelsOverlay h1 {
 	color: #FFF;
 	font-weight: bold;
-	font-size: clamp(3.5em, 18vw, 10em);
+	font-size: clamp(3em, 15vw, 8em);
 	letter-spacing: 2px;
 	text-align: center;
 	padding: 0 20px;
@@ -91,7 +91,7 @@ $countdownTargetIso = date('c', strtotime($countdownTarget));
   </div>
   <div id="levelsOverlay">
     <a href="#" id="levelsCloseLink" onclick="toggleLevelsMode(event);">&times;</a>
-    <h1><span>LEVELS</span><span>- AVICII</span></h1>
+    <h1><span>LEVELS -</span><span>AVICII</span></h1>
   </div>
   <script>
   var countdownTarget = new Date("<?php echo $countdownTargetIso; ?>").getTime();
