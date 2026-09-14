@@ -14,7 +14,7 @@ $countdownTargetIso = date('c', strtotime($countdownTarget));
 	width: 20em;
 	max-width: 100%;
 	margin: 0 auto;
-	padding-top: 15px;
+	padding-top: 75px;
 }
 #headerRow {
 	min-height: 65px;
@@ -23,6 +23,7 @@ $countdownTargetIso = date('c', strtotime($countdownTarget));
 	position: absolute;
 	top: 10px;
 	right: 15px;
+	padding: 6px 10px;
 	color: #FFF;
 	text-decoration: none;
 	font-weight: bold;
@@ -73,7 +74,7 @@ $countdownTargetIso = date('c', strtotime($countdownTarget));
   </div>
   <div class="row" id="widgets" style="text-align:center;color:#000">
     <div class="col-md-12">
-      <h2 style="margin:15px 0 0 0"><?php echo htmlspecialchars($countdownText); ?></h2>
+      <h2 style="margin:75px 0 0 0"><?php echo htmlspecialchars($countdownText); ?></h2>
       <div id="timer">
         <span id="days" class="time">00</span>:<span id="hours" class="time">00</span>:<span id="minutes" class="time">00</span>:<span id="seconds" class="time">00</span>
       </div>
