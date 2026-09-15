@@ -83,7 +83,7 @@ $countdownTargetIso = date('c', strtotime($countdownTarget));
   </div>
   <div class="row" id="widgets" style="text-align:center;color:#000">
     <div class="col-md-12">
-      <h2 style="margin:75px 0 0 0"><?php echo htmlspecialchars($countdownText); ?></h2>
+      <h2 id="countdownCaption" style="margin:75px 0 0 0"></h2>
       <div id="timer">
         <span id="days" class="time">00</span>:<span id="hours" class="time">00</span>:<span id="minutes" class="time">00</span>:<span id="seconds" class="time">00</span>
       </div>
@@ -93,8 +93,59 @@ $countdownTargetIso = date('c', strtotime($countdownTarget));
     <a href="#" id="levelsCloseLink" onclick="toggleLevelsMode(event);">&times;</a>
     <h1><span>LEVELS -</span><span>AVICII</span></h1>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <script>
   var countdownTarget = new Date("<?php echo $countdownTargetIso; ?>").getTime();
+
+  var farTexts = [
+    "Not yet...",
+    "Check back later...",
+    "Ask Caroline (or Ryan)...",
+    "Do horses fly?",
+    "Is water wet? (it's not)",
+    "No (en español)..."
+  ];
+  var nearTexts = [
+    "Getting closer...",
+    "Get your Red Bulls ready...",
+    "Any day now...",
+    "Stocking the bar...",
+    "Prepping the dance floor...",
+    "Less than a month...",
+    "OMG..."
+  ];
+  var currentTier = null;
+
+  function pickRandom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function fireConfetti() {
+    if (typeof confetti !== 'function') {
+      return;
+    }
+    confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 } });
+    setTimeout(function () {
+      confetti({ particleCount: 150, spread: 120, origin: { y: 0.4 } });
+    }, 400);
+  }
+
+  function updateCaption(diff, days) {
+    var tier = diff <= 0 ? 'done' : (days > 30 ? 'far' : 'near');
+    if (tier === currentTier) {
+      return;
+    }
+    currentTier = tier;
+    var caption = document.getElementById('countdownCaption');
+    if (tier === 'done') {
+      caption.innerHTML = "Finally!! Let's party!";
+      fireConfetti();
+    } else if (tier === 'far') {
+      caption.innerHTML = pickRandom(farTexts);
+    } else {
+      caption.innerHTML = pickRandom(nearTexts);
+    }
+  }
 
   function updateCountdown() {
     var diff = Math.max(0, countdownTarget - new Date().getTime());
@@ -108,6 +159,8 @@ $countdownTargetIso = date('c', strtotime($countdownTarget));
     document.getElementById('hours').innerHTML = ("0" + hours).slice(-2);
     document.getElementById('minutes').innerHTML = ("0" + minutes).slice(-2);
     document.getElementById('seconds').innerHTML = ("0" + seconds).slice(-2);
+
+    updateCaption(diff, days);
   }
 
   updateCountdown();
