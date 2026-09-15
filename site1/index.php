@@ -145,6 +145,7 @@ function pause() {
 	    flagTimer='resume';
 	    chart.update();
 		document.getElementById("bets").classList.add("visible");
+		document.getElementById("bets").classList.remove("invisible");
 		document.getElementById('ouToggle').style="";
 		document.getElementById('inputDropdown').style="display:none";
 		document.getElementById('slider_left').style.backgroundColor="#8D9092";
