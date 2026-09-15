@@ -111,8 +111,7 @@ $countdownTargetIso = date('c', strtotime($countdownTarget));
     "Any day now...",
     "Stocking the bar...",
     "Prepping the dance floor...",
-    "Less than a month...",
-    "OMG..."
+    "Less than a month, OMG..."
   ];
   var currentTier = null;
 
