@@ -1,3 +1,15 @@
+<?php
+require __DIR__ . '/../shared/db.php';
+$betsVisible = false;
+if ($conn) {
+	$result = mysqli_query($conn, "SELECT status FROM timer ORDER BY id DESC LIMIT 1");
+	if ($result && ($row = mysqli_fetch_assoc($result))) {
+		$betsVisible = ($row['status'] !== 'clear');
+	}
+	mysqli_close($conn);
+}
+$betsClass = $betsVisible ? 'visible' : 'invisible';
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -452,7 +464,7 @@ init_request.send();
 			   <span id="ovrundrseconds" class="time"></span>
 			   <br> 
         </div>
-		<div class="col-6" id="bets" style="padding:5px"> 
+		<div class="col-6 <?php echo $betsClass; ?>" id="bets" style="padding:5px">
 		   <button id="underButton" class="btn btn-dark btn-lg OverUnder align-items-center" onClick="vote('Under');" style="background-color:#13294B"><div style="margin-top:-5px"><h1>-</h1></div></button>  
 		   <button id="overButton" class="btn btn-dark btn-lg OverUnder align-items-center" onClick="vote('Over');" style="background-color:#7BAFD4;border-color:#7BAFD4"><div style="margin-top:-4px"><h1>+</h1></div></button> 
 		</div>
