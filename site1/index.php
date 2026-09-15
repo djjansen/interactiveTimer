@@ -1,14 +1,81 @@
 <?php
 require __DIR__ . '/../shared/db.php';
-$betsVisible = false;
+
+// Mirrors fetch()'s per-poll DOM logic below, so a fresh page load already
+// reflects the actual server state instead of the hardcoded defaults for the
+// ~1s until the first poll response would otherwise correct them.
+function pad2($n) {
+	return substr("0" . $n, -2);
+}
+
+$initHours = '00';
+$initMinutes = '00';
+$initSeconds = '00';
+$initPauseLabel = 'start';
+$initFlagTimer = 'start';
+$roundActive = false;
+$initOverUnderRaw = '';
+$initOverCount = 0;
+$initUnderCount = 0;
+
 if ($conn) {
-	$result = mysqli_query($conn, "SELECT status FROM timer ORDER BY id DESC LIMIT 1");
-	if ($result && ($row = mysqli_fetch_assoc($result))) {
-		$betsVisible = ($row['status'] !== 'clear');
+	$row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT status, readout FROM timer ORDER BY id DESC LIMIT 1"));
+	$diffRow = mysqli_fetch_assoc(mysqli_query($conn, "SELECT TIMEDIFF(NOW(), (SELECT MAX(time) FROM timer)) AS diff"));
+	$ouRow = mysqli_fetch_assoc(mysqli_query($conn, "SELECT OverUnder FROM OverUnder ORDER BY id DESC LIMIT 1"));
+	$startRow = mysqli_fetch_assoc(mysqli_query($conn, "SELECT MAX(time) AS maxtime FROM timer WHERE status='start'"));
+
+	if ($row) {
+		$status = $row['status'];
+		$roundActive = ($status !== 'clear');
+		$initOverUnderRaw = $ouRow ? $ouRow['OverUnder'] : '';
+
+		list($rH, $rM, $rS) = array_map('intval', explode(':', $diffRow['diff']));
+		list($tH, $tM, $tS) = array_map('intval', explode(':', $row['readout']));
+
+		$totalS = $rS + $tS;
+		$carryM = 0;
+		if ($totalS >= 60) { $totalS -= 60; $carryM = 1; }
+		$totalM = $carryM + $rM + $tM;
+		$carryH = 0;
+		if ($totalM >= 60) { $totalM -= 60; $carryH = 1; }
+		$totalH = $carryH + $rH + $tH;
+
+		if ($status === 'pause') {
+			$initHours = pad2($tH);
+			$initMinutes = pad2($tM);
+			$initSeconds = pad2($tS);
+			$initPauseLabel = 'resume';
+			$initFlagTimer = 'pause';
+		} elseif ($status === 'clear') {
+			$initHours = pad2($tH);
+			$initMinutes = pad2($tM);
+			$initSeconds = pad2($tS);
+			$initPauseLabel = 'start';
+			$initFlagTimer = 'start';
+		} else {
+			$initHours = pad2($totalH);
+			$initMinutes = pad2($totalM);
+			$initSeconds = pad2($totalS);
+			$initPauseLabel = 'pause';
+			$initFlagTimer = 'resume';
+		}
+
+		if ($startRow && $startRow['maxtime']) {
+			$maxtime = mysqli_real_escape_string($conn, $startRow['maxtime']);
+			$initOverCount = mysqli_num_rows(mysqli_query($conn, "SELECT id FROM OverUnder WHERE time > '$maxtime' AND vote='Over'"));
+			$initUnderCount = mysqli_num_rows(mysqli_query($conn, "SELECT id FROM OverUnder WHERE time > '$maxtime' AND vote='Under'"));
+		}
 	}
 	mysqli_close($conn);
 }
-$betsClass = $betsVisible ? 'visible' : 'invisible';
+
+$betsClass = $roundActive ? 'visible' : 'invisible';
+$ouToggleStyle = $roundActive ? '' : 'display:none';
+$inputDropdownStyle = $roundActive ? 'display:none' : '';
+$sliderLeftBg = $roundActive ? '#8D9092' : '#13294B';
+$sliderLeftColor = $roundActive ? '#8D9092' : '#FFF';
+$sliderRightBg = $roundActive ? '#7BAFD4' : '#8D9092';
+$sliderRightColor = $roundActive ? '#FFF' : '#8D9092';
 ?>
 <!DOCTYPE html>
 <html>
@@ -18,7 +85,7 @@ $betsClass = $betsVisible ? 'visible' : 'invisible';
 <?php include __DIR__ . '/../shared/partials/head.php'; ?>
 <script type="text/javascript">
 paused = false;
-flagTimer='start';
+flagTimer='<?php echo $initFlagTimer; ?>';
 var lastActionTime = 0;
 function ajax(funct) {
 		var hrs = document.getElementById("hours").innerHTML;
@@ -177,8 +244,8 @@ function pause() {
   }
 }
 
-var OverCount = 0;
-var UnderCount = 0;
+var OverCount = <?php echo (int)$initOverCount; ?>;
+var UnderCount = <?php echo (int)$initUnderCount; ?>;
 var voteCount = 0;
 var startTime = 0;
 
@@ -422,12 +489,12 @@ init_request.send();
   	<div class="row">
   	<div class="col-md-12">
   		<div id ="slider">
-  			<div id ="slider_left">
+  			<div id ="slider_left" style="background-color:<?php echo $sliderLeftBg; ?>;color:<?php echo $sliderLeftColor; ?>">
   				<h3>
   					Vacant
   				</h3>
   			</div>
-  			<div id="slider_right">
+  			<div id="slider_right" style="background-color:<?php echo $sliderRightBg; ?>;color:<?php echo $sliderRightColor; ?>">
   				<h3>
   					Occupied
   				</h3>
@@ -438,14 +505,14 @@ init_request.send();
 </div>
 <div class ="row" id="widgets" style="alignment:center;text-align:center;color:#000">
 	<div class="col-md-12" id="timer">
-		<span id="hours" class="time">00</span>:<span id="minutes" class="time">00</span>:<span id="seconds" class="time">00</span>
+		<span id="hours" class="time"><?php echo $initHours; ?></span>:<span id="minutes" class="time"><?php echo $initMinutes; ?></span>:<span id="seconds" class="time"><?php echo $initSeconds; ?></span>
 	</div>
 </div>
 <div class="container" style="text-align:center;margin:auto">
 	<div class="row" id ="overunder_row" style="color:#000">
 		<div class="col-6" id="ovrundr">
 				<h3>Over/Under<span id="asterisk" style="color:red"></span></h3>
-			   <div class="input-group" id="inputDropdown" style="">
+			   <div class="input-group" id="inputDropdown" style="<?php echo $inputDropdownStyle; ?>">
 			   <form class="form-inline" style="text-align:center;margin:auto">
 			  <select class="custom-select" id="numberSelect" style="width:65px;border-radius: 5px 0px 0px 5px">
 			    <option selected></option>
@@ -457,8 +524,8 @@ init_request.send();
 	        <span class="input-group-text" id="basic-addon2" style="border-radius: 0px 5px 5px 0px">min</span>
 	        </div></form></div>
 	        <span id="warning" style="color:red"></span>
-	            <div id="ouToggle" style="display:none">
-        	   	<h5><span id="overUnderDigit"></span><span id="overUnderSelected"></span></h5>
+	            <div id="ouToggle" style="<?php echo $ouToggleStyle; ?>">
+        	   	<h5><span id="overUnderDigit"><?php echo htmlspecialchars($initOverUnderRaw); ?></span><span id="overUnderSelected"><?php echo $roundActive ? ' min' : ''; ?></span></h5>
         	   </div>
 			  <span id="ovrundrhours" class="time"></span>
 			   <span id="ovrundrminutes" class="time"></span>
@@ -484,7 +551,7 @@ init_request.send();
     </div>
 </div>
 <div class="container" id="footer">
-		<button type="button" id="Pause" class="btn btn-dark btn-lg" onClick="pause();">start</button>
+		<button type="button" id="Pause" class="btn btn-dark btn-lg" onClick="pause();"><?php echo $initPauseLabel; ?></button>
 		<button type="button" id="Clear" class="btn btn-dark btn-lg" onClick="reset();">clear</button>
 </div>
 </body>
@@ -501,7 +568,7 @@ var chart = new Chart(ctx, {
             label: "Over/Under",
             backgroundColor: ['#7BAFD4','#13294B'],
             borderColor: 'rgb(66, 134, 244)',
-            data: [0]
+            data: [<?php echo (int)$initOverCount; ?>, <?php echo (int)$initUnderCount; ?>]
         }]
     },
 
