@@ -31,7 +31,7 @@ body {
 }
 #footer {
   text-align:center;
-  margin-bottom:5%;
+  margin-bottom:40px;
   padding:10px;
 }
 </style>

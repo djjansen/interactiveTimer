@@ -410,7 +410,7 @@ init_request.send();
 	width: 16em;
 	max-width: 100%;
 	margin: 0 auto;
-	padding-top: 75px;
+	padding-top: 60px;
 	padding-bottom: 20px;
 }
 #overunder_row {
