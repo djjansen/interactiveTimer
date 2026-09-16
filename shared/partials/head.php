@@ -27,6 +27,7 @@ body {
   text-align:center;
   padding-right:0;
   padding-left:0;
+  min-height: 65px;
 }
 #footer {
   text-align:center;
