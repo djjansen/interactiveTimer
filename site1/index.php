@@ -60,7 +60,10 @@ if ($conn) {
 			$initFlagTimer = 'resume';
 		}
 
-		if ($startRow && $startRow['maxtime']) {
+		// fetch()'s "clear" branch always forces the chart to 0/0 rather than
+		// trusting this count, since leftover votes from before the last
+		// clear otherwise still match "time > last start".
+		if ($status !== 'clear' && $startRow && $startRow['maxtime']) {
 			$maxtime = mysqli_real_escape_string($conn, $startRow['maxtime']);
 			$initOverCount = mysqli_num_rows(mysqli_query($conn, "SELECT id FROM OverUnder WHERE time > '$maxtime' AND vote='Over'"));
 			$initUnderCount = mysqli_num_rows(mysqli_query($conn, "SELECT id FROM OverUnder WHERE time > '$maxtime' AND vote='Under'"));
@@ -157,8 +160,8 @@ if (selection == 'Over') {
 	UnderCount++;
 }
 OvrUnd(selection);
-chart.data.datasets[0].data[0]=[OverCount];
-chart.data.datasets[0].data[1]=[UnderCount];
+chart.data.datasets[0].data[0]=OverCount;
+chart.data.datasets[0].data[1]=UnderCount;
 chart.update();
 voteCount++;
 }
@@ -179,8 +182,8 @@ document.getElementById('slider_left').style.backgroundColor="#13294B";
 document.getElementById('slider_left').style.color="#FFF";
 document.getElementById('slider_right').style.backgroundColor="#8D9092";
 document.getElementById('slider_right').style.color="#8D9092";
-chart.data.datasets[0].data[0]=[0];
-chart.data.datasets[0].data[1]=[0];
+chart.data.datasets[0].data[0]=0;
+chart.data.datasets[0].data[1]=0;
 chart.update();
 ajax('Clear');
 flagTimer='start';
@@ -194,8 +197,8 @@ function pause() {
   	if (ouString) {
   		document.getElementById('asterisk').innerHTML=""
   		document.getElementById('warning').innerHTML=""
-	  	chart.data.datasets[0].data[0]=[0];
-		chart.data.datasets[0].data[1]=[0];
+	  	chart.data.datasets[0].data[0]=0;
+		chart.data.datasets[0].data[1]=0;
 		chart.update();
 	  	var overunder_init = 240 + ((Math.floor((Math.random() * 10) + 1))*60);
 		var ou_hrs_init = Math.floor(overunder_init / 3600);
@@ -330,8 +333,8 @@ if (s[1] == "pause") {
 	document.getElementById('slider_left').style.color="#FFF";
 	document.getElementById('slider_right').style.backgroundColor="#8D9092";
 	document.getElementById('slider_right').style.color="#8D9092";
-	chart.data.datasets[0].data[0]=[0];
-	chart.data.datasets[0].data[1]=[0];
+	chart.data.datasets[0].data[0]=0;
+	chart.data.datasets[0].data[1]=0;
 	chart.update();
 } else {
     document.getElementById('Pause').innerHTML="pause";
@@ -388,8 +391,8 @@ if ((rawTime % 60 == 0) && (rawTime > 60) && (document.getElementById('Pause').i
 }
 
 if (s[1] != "clear") {
-chart.data.datasets[0].data[0]=[OverCount];
-chart.data.datasets[0].data[1]=[UnderCount];
+chart.data.datasets[0].data[0]=OverCount;
+chart.data.datasets[0].data[1]=UnderCount;
 chart.update();
 }
 var milliseconds = new Date().getMilliseconds();
